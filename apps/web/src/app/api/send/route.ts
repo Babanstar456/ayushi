@@ -1,12 +1,11 @@
-// app/api/send/route.ts
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Initialize Resend with API key from environment variable
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: Request) {
   try {
+    // ✅ create here, not outside
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const { fullname, email, message } = await request.json();
 
     const data = await resend.emails.send({
@@ -24,6 +23,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(data);
   } catch (error) {
+    console.error(error); // helpful for logs
     return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
   }
 }
